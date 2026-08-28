@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Code Assistant</title>
+<style>
+body{
+    background:linear-gradient(135deg,#556b2f,#6b8e23);
+    font-family:Arial;
+}
+.container{
+    width:70%;
+    margin:30px auto;
+    background:rgba(0,0,0,0.2);
+    padding:25px;
+    border-radius:12px;
+    color:white;
+}
+h1{color:#00ffcc}
+label{margin-top:15px;display:block}
+textarea,input{
+    width:100%;padding:10px;border-radius:8px;border:none;
+}
+pre,.box{
+    background:#f2f2f2;color:black;
+    padding:10px;border-radius:8px;
+}
+button{
+    margin-top:15px;
+    padding:10px 18px;
+    border-radius:20px;
+    border:none;
+    background:linear-gradient(to right,#00bfff,#00ffcc);
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>AI Code Assistant</h1>
+
+<label>Task Description</label>
+<textarea id="task"></textarea>
+
+<label>Test Input</label>
+<input id="testInput">
+
+<button onclick="generate()">Generate & Execute</button>
+
+<label>Generated Code</label>
+<pre id="code"></pre>
+
+<label>Output</label>
+<div class="box" id="output"></div>
+
+<label>Answer</label>
+<div class="box" id="answer"></div>
+
+<label>Human Feedback</label>
+<textarea id="feedback"></textarea>
+
+<button onclick="applyFeedback()">Apply Feedback</button>
+</div>
+
+<script>
+function generate(){
+fetch("/generate",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+        task:document.getElementById("task").value,
+        testInput:document.getElementById("testInput").value
+    })
+})
+.then(res=>res.json())
+.then(data=>{
+    document.getElementById("code").innerText=data.generated_code;
+    document.getElementById("output").innerText=data.output;
+    document.getElementById("answer").innerText=data.answer;
+});
+}
+
+function applyFeedback(){
+fetch("/feedback",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+        feedback:document.getElementById("feedback").value
+    })
+})
+.then(res=>res.json())
+.then(data=>{
+    document.getElementById("code").innerText=data.final_code;
+    document.getElementById("output").innerText=data.output;
+    document.getElementById("answer").innerText=data.answer;
+});
+}
+</script>
+</body>
+</html>
+    
